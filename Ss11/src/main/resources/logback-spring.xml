@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- [MỚI] Cấu hình Logging cho dự án sử dụng Logback (Slf4j) -->
+
+    <!-- Định nghĩa các thuộc tính -->
+    <property name="LOG_DIR" value="logs" />
+    <property name="LOG_FILE" value="app" />
+
+    <!-- 1. Appender cho Console (Màn hình terminal) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Định dạng: Thời gian [Thread] Mức-độ Class - Nội dung -->
+            <!-- Có sử dụng màu sắc cho dễ nhìn trên console -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 2. Appender cho File (Lưu vào ổ đĩa) -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${LOG_FILE}.log</file>
+
+        <!-- Cấu hình xoay vòng file (Rolling policy) -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Tên file khi được nén lại theo ngày -->
+            <fileNamePattern>${LOG_DIR}/archived/${LOG_FILE}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- Mỗi file tối đa 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- Lưu tối đa 30 ngày -->
+            <maxHistory>30</maxHistory>
+            <!-- Tổng dung lượng các file log cũ tối đa 100MB -->
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Cấu hình Logging Level -->
+    <!-- Log của Spring và thư viện khác ở mức INFO -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+
+    <!-- Log của mã nguồn dự án ở mức DEBUG để xem chi tiết khi phát triển -->
+    <logger name="re.ss11" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+
+</configuration>
