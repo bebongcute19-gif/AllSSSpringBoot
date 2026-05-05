@@ -14,10 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 
 @Configuration
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -47,6 +49,10 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**")
                         .hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers(HttpMethod.POST, "/api/orders").hasRole("CUSTOMER")
+                        .requestMatchers("/api/orders/my").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/orders").hasAnyRole("STAFF","ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/orders/**").hasRole("STAFF")
 
                         .anyRequest().authenticated()
                 )
